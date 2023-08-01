@@ -1,21 +1,23 @@
-import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
-
-type PropsType={
-    callback:(title: string)=>void
- }
+import { Button, TextField } from '@mui/material';
+import React, { ChangeEvent, KeyboardEvent, useState } from 'react';
+import AcUnitIcon from '@mui/icons-material/AcUnit';
 
 
-export const AddItemForm = (props:PropsType) => {
+type AddItemFormPropsType = {
+    addItem: (title: string) => void
+}
+
+export function AddItemForm(props: AddItemFormPropsType) {
+
     let [title, setTitle] = useState("")
-    let [error, setError] = useState<string | null>(null)
+    let [error, setError] = useState<boolean>(false)
 
-    const addTask = () => {
-        let newTitle = title.trim();
-        if (newTitle !== "") {
-            props.callback(newTitle);
+    const addItem = () => {
+        if (title.trim() !== "") {
+            props.addItem(title);
             setTitle("");
         } else {
-            setError("Title is required");
+           setError(false);
         }
     }
 
@@ -24,22 +26,34 @@ export const AddItemForm = (props:PropsType) => {
     }
 
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(null);
+        setError(true);
         if (e.charCode === 13) {
-            addTask();
+            addItem();
         }
     }
 
-    return (
-        <div>
-            <input value={title}
-                   onChange={onChangeHandler}
-                   onKeyPress={onKeyPressHandler}
-                   className={error ? "error" : ""}
-            />
-            <button onClick={addTask}>+</button>
-            {error && <div className="error-message">{error}</div>}
-        </div>
-    );
-};
+    return <div
+        style={{
+            display: 'flex',
+            minHeight: '100px',
+            alignItems: 'flex-start'
+        }}>
+        <TextField variant={"outlined"} value={title}
+            sx={{ mr: '5px' }}
+            onChange={onChangeHandler}
+            size={"small"}
+            onKeyPress={onKeyPressHandler}
+            error={!!error}
+        />
+        <Button
+            size={'small'}
+            color={"primary"}
+            onClick={addItem}
+            endIcon={<AcUnitIcon />}
+            variant={'contained'}
+            sx={{mt:"3px"}}
+        ></Button>
 
+        {error && <div className="error-message">{error}</div>}
+    </div>
+}
