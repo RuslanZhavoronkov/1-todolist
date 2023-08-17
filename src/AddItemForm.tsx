@@ -1,6 +1,7 @@
-import { Button, TextField } from '@mui/material';
-import React, { ChangeEvent, KeyboardEvent, useState } from 'react';
-import AcUnitIcon from '@mui/icons-material/AcUnit';
+import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
+import {IconButton, TextField} from "@mui/material";
+import {AddBox} from "@mui/icons-material";
+
 
 
 type AddItemFormPropsType = {
@@ -10,14 +11,14 @@ type AddItemFormPropsType = {
 export function AddItemForm(props: AddItemFormPropsType) {
 
     let [title, setTitle] = useState("")
-    let [error, setError] = useState<boolean>(false)
+    let [error, setError] = useState<string | null>(null)
 
     const addItem = () => {
         if (title.trim() !== "") {
             props.addItem(title);
             setTitle("");
         } else {
-           setError(false);
+            setError("Title is required");
         }
     }
 
@@ -26,34 +27,23 @@ export function AddItemForm(props: AddItemFormPropsType) {
     }
 
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(true);
+        setError(null);
         if (e.charCode === 13) {
             addItem();
         }
     }
 
-    return <div
-        style={{
-            display: 'flex',
-            minHeight: '100px',
-            alignItems: 'flex-start'
-        }}>
-        <TextField variant={"outlined"} value={title}
-            sx={{ mr: '5px' }}
-            onChange={onChangeHandler}
-            size={"small"}
-            onKeyPress={onKeyPressHandler}
-            error={!!error}
+    return <div>
+        <TextField variant="outlined"
+                   error={!!error}
+                   value={title}
+                   onChange={onChangeHandler}
+                   onKeyPress={onKeyPressHandler}
+                   label="Title"
+                   helperText={error}
         />
-        <Button
-            size={'small'}
-            color={"primary"}
-            onClick={addItem}
-            endIcon={<AcUnitIcon />}
-            variant={'contained'}
-            sx={{mt:"3px"}}
-        ></Button>
-
-        {error && <div className="error-message">{error}</div>}
+        <IconButton color="primary" onClick={addItem}>
+            <AddBox />
+        </IconButton>
     </div>
 }
